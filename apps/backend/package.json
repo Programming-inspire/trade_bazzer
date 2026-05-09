@@ -1,0 +1,31 @@
+{
+  "name": "trade_bazzer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Programming-inspire/trade_bazzer.git"
+  },
+  "keywords": [],
+  "author": "karthiswaran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Programming-inspire/trade_bazzer/issues"
+  },
+  "homepage": "https://github.com/Programming-inspire/trade_bazzer#readme",
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
