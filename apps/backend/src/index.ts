@@ -1,9 +1,10 @@
 import express from "express";
+import "dotenv/config";
 
 const app = express();
 
 app.use(express.json());
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 app.get("/", (_req, res) => {
   res.send("Trade Bazzer API is running");
