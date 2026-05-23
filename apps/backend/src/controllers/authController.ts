@@ -3,6 +3,14 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 
+export interface AuthRequest extends Request {
+  user?: {
+    _id: string;
+    name?: string;
+    email?: string;
+  };
+}
+
 export const registerUser = async (
   req: Request,
   res: Response
@@ -79,11 +87,11 @@ export const loginUser = async (
 };
 
 export const getUserProfile = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
   res.status(200).json({
     message: "Profile fetched successfully",
-    user: (req as any).user,
+    user: req.user,
   });
 };
