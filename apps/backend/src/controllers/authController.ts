@@ -77,3 +77,13 @@ export const loginUser = async (
     });
   }
 };
+
+export const getUserProfile = async (
+  req: Request,
+  res: Response
+) => {
+  res.status(200).json({
+    message: "Profile fetched successfully",
+    user: (req as any).user,
+  });
+};
