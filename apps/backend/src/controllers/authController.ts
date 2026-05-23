@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import generateToken from "../utils/generateToken.js";
 
 export const registerUser = async (
   req: Request,
@@ -65,8 +66,9 @@ export const loginUser = async (
     }
 
     res.status(200).json({
-      message: "Login successful",
-      user,
+    message: "Login successful",
+    token: generateToken(user._id.toString()),
+    user,
     });
   } catch (error) {
     res.status(500).json({
