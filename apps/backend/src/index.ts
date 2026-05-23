@@ -1,21 +1,16 @@
 import express from "express";
-import "dotenv/config";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+
+dotenv.config();
+
+connectDB();
 
 const app = express();
 
 app.use(express.json());
-const PORT = process.env.PORT;
 
-app.get("/", (_req, res) => {
-  res.send("Trade Bazzer API is running");
-});
-
-app.get("/health", (_req, res) => {
-  res.status(200).json({
-    status: "ok",
-    service: "backend",
-  });
-});
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
