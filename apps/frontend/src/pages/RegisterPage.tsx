@@ -1,5 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PasswordInput from "../components/PasswordInput";
+import LoadingButton from "../components/LoadingButton";
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from "../utils/validation";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -8,6 +15,7 @@ const RegisterPage = () => {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // ERROR STATES
   const [usernameError, setUsernameError] = useState<string>("");
@@ -15,62 +23,46 @@ const RegisterPage = () => {
   const [passwordError, setPasswordError] = useState<string>("");
 
   // VALIDATION
-  const validateForm = () => {
-    let isValid = true;
+const validateForm = () => {
+  let isValid = true;
 
-    setUsernameError("");
-    setEmailError("");
-    setPasswordError("");
+  const usernameValidation = validateUsername(username);
+  const emailValidation = validateEmail(email);
+  const passwordValidation = validatePassword(password);
 
-    // USERNAME
-    if (!username) {
-      setUsernameError("Username is required");
-      isValid = false;
-    } else if (username.length < 3) {
-      setUsernameError("Username must be minimum 3 characters");
-      isValid = false;
-    }
+  setUsernameError(usernameValidation);
+  setEmailError(emailValidation);
+  setPasswordError(passwordValidation);
 
-    // EMAIL
-    if (!email) {
-      setEmailError("Email is required");
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError("Enter valid email");
-      isValid = false;
-    }
+  if (
+    usernameValidation ||
+    emailValidation ||
+    passwordValidation
+  ) {
+    isValid = false;
+  }
 
-    // PASSWORD
-    if (!password) {
-      setPasswordError("Password is required");
-      isValid = false;
-    } else if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(
-        password
-      )
-    ) {
-      setPasswordError(
-        "Use 6+ chars with uppercase, lowercase, number & special character"
-      );
-
-      isValid = false;
-    }
-
-    return isValid;
-  };
+  return isValid;
+};
 
   // REGISTER
-  const handleRegister = () => {
-    const isValid = validateForm();
+const handleRegister = async () => {
+  const isValid = validateForm();
 
-    if (!isValid) return;
+  if (!isValid) return;
 
+  setIsLoading(true);
+
+  setTimeout(() => {
     console.log({
       username,
       email,
       password,
     });
-  };
+
+    setIsLoading(false);
+  }, 1500);
+};
 
   return (
     <div className="min-h-screen flex bg-white">
@@ -111,6 +103,7 @@ const RegisterPage = () => {
 
             <input
               type="text"
+              disabled={isLoading}
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -132,6 +125,7 @@ const RegisterPage = () => {
 
             <input
               type="email"
+              disabled={isLoading}
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -146,33 +140,27 @@ const RegisterPage = () => {
           </div>
 
           {/* PASSWORD */}
-          <div className="mb-8">
+            <div className="mb-8">
             <label className="block text-lg font-semibold mb-3">
-              Password
+                Password
             </label>
 
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-5 py-4 outline-none focus:ring-2 focus:ring-[#3E628F]"
+            <PasswordInput
+                value={password}
+                onChange={setPassword}
+                error={passwordError}
+                onEnterPress={handleRegister}
+                disabled={isLoading}
             />
-
-            {passwordError && (
-              <p className="text-red-500 mt-2 text-sm">
-                {passwordError}
-              </p>
-            )}
-          </div>
+            </div>
 
           {/* REGISTER BUTTON */}
-          <button
+            <LoadingButton
+            text="Register"
+            loadingText="Creating account..."
+            isLoading={isLoading}
             onClick={handleRegister}
-            className="w-full bg-[#EF724D] hover:bg-[#e9643d] cursor-pointer text-white font-semibold py-4 rounded-xl transition duration-300"
-          >
-            Register
-          </button>
+            />
 
           {/* LOGIN NAVIGATION */}
           <p className="text-center text-gray-500 mt-8 text-lg">

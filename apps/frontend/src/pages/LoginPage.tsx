@@ -1,60 +1,55 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PasswordInput from "../components/PasswordInput";
+import LoadingButton from "../components/LoadingButton";
+
+import {
+  validateEmail,
+  validatePassword,
+} from "../utils/validation";
 
 const LoginPage = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
 
-  const validateForm = () => {
-    let isValid = true;
+const validateForm = () => {
+  let isValid = true;
 
-    setEmailError("");
-    setPasswordError("");
+  const emailValidation = validateEmail(email);
+  const passwordValidation = validatePassword(password);
 
-    // EMAIL VALIDATION
-    if (!email) {
-      setEmailError("Email is required");
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError("Enter valid email");
-      isValid = false;
-    }
+  setEmailError(emailValidation);
+  setPasswordError(passwordValidation);
 
-    // PASSWORD VALIDATION
-    if (!password) {
-    setPasswordError("Password is required");
+  if (emailValidation || passwordValidation) {
     isValid = false;
-    } else if (
-    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(
-        password
-    )
-    ) {
-    setPasswordError(
-        "Password must contain uppercase, lowercase, number, special character and minimum 6 characters"
-    );
+  }
 
-  isValid = false;
-}
+  return isValid;
+};
 
-    return isValid;
-  };
+const handleLogin = async () => {
+  const isValid = validateForm();
 
-  const handleLogin = () => {
-    const isValid = validateForm();
+  if (!isValid) return;
 
-    if (!isValid) return;
+  setIsLoading(true);
 
+  setTimeout(() => {
     console.log({
       email,
       password,
     });
-  };
 
+    setIsLoading(false);
+  }, 1500);
+};
   return (
     <div className="min-h-screen flex bg-white">
 
@@ -94,11 +89,11 @@ const LoginPage = () => {
 
             <input
               type="email"
+              disabled={isLoading}
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-5 py-4 outline-none focus:ring-2 focus:ring-[#3E628F]"
-            />
+              className={`w-full border border-gray-300 rounded-xl px-5 py-4 outline-none focus:ring-2 focus:ring-[#3E628F] ${isLoading ? "bg-gray-100 cursor-not-allowed" : ""}`}/>
 
             {emailError && (
               <p className="text-red-500 mt-2 text-sm">
@@ -108,33 +103,27 @@ const LoginPage = () => {
           </div>
 
           {/* PASSWORD */}
-          <div className="mb-8">
+            <div className="mb-8">
             <label className="block text-lg font-semibold mb-3">
-              Password
+                Password
             </label>
 
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-5 py-4 outline-none focus:ring-2 focus:ring-[#3E628F]"
+            <PasswordInput
+            value={password}
+            onChange={setPassword}
+            error={passwordError}
+            onEnterPress={handleLogin}
+            disabled={isLoading}
             />
-
-            {passwordError && (
-              <p className="text-red-500 mt-2 text-sm">
-                {passwordError}
-              </p>
-            )}
-          </div>
+            </div>
 
           {/* LOGIN BUTTON */}
-          <button
+            <LoadingButton
+            text="Log In"
+            loadingText="Logging in..."
+            isLoading={isLoading}
             onClick={handleLogin}
-            className="w-full bg-[#EF724D] hover:bg-[#e9643d] cursor-pointer text-white font-semibold py-4 rounded-xl transition duration-300"
-          >
-            Log In
-          </button>
+            />
 
           {/* REGISTER */}
           <p className="text-center text-gray-500 mt-8 text-lg">
